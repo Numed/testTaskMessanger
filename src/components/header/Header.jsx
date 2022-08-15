@@ -1,0 +1,103 @@
+import { useState } from "react";
+import styled from "styled-components";
+import avatar from "../../img/avatar.jpg";
+
+const HeaderContainer = styled.header`
+  width: 100%;
+  height: 100%;
+  border-bottom: 1px solid #d9d9d9;
+`;
+
+const HeaderInner = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px 0;
+`;
+
+const Logo = styled.div`
+  width: 32px;
+  height: 32px;
+  background-color: #2f8dee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #ffffff;
+  border-radius: 20px;
+`;
+
+const InputSearch = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    width: 12px;
+    height: 12px;
+    margin-right: 10px;
+  }
+`;
+
+const Input = styled.input`
+  width: 255px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #222222;
+
+  &:active,
+  &:focus {
+    border: none;
+    outline: none;
+  }
+`;
+
+const Avatar = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 20px;
+  position: relative;
+  background: url(${avatar}) no-repeat center;
+  background-size: cover;
+`;
+
+const CircleActive = styled.span`
+  width: 14px;
+  height: 14px;
+  background: #22cb47;
+  position: absolute;
+  top: 65%;
+  left: 65%;
+  border-radius: 8px;
+  z-index: 2;
+`;
+
+const Header = () => {
+  const [searchValue, setSearchValue] = useState("");
+  return (
+    <HeaderContainer>
+      <HeaderInner>
+        <Logo>M</Logo>
+        <InputSearch>
+          <i className="fas fa-search"></i>
+          <Input
+            type="search"
+            placeholder="Search.."
+            value={searchValue}
+            onInput={(e) => setSearchValue(e.target.value)}
+          />
+        </InputSearch>
+        <Avatar>
+          <CircleActive />
+        </Avatar>
+      </HeaderInner>
+    </HeaderContainer>
+  );
+};
+
+export default Header;
