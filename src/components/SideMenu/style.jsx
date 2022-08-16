@@ -33,6 +33,10 @@ export const Chat = styled.div`
   cursor: pointer;
   &:not(:first-child) {
     margin-top: 20px;
+
+    @media (max-width: 780px) {
+      margin-top: 10px;
+    }
   }
 
   &:hover {
@@ -40,12 +44,27 @@ export const Chat = styled.div`
     box-shadow: 0 1px 4px 4px rgba(0, 0, 0, 0.25);
     transition: all 0.25s ease-in-out;
   }
+
+  &.hide {
+    display: none;
+  }
+
+  @media (max-width: 1035px) {
+    margin-left: 20px;
+    width: 100%;
+  }
+
+  @media (max-width: 780px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 export const AvatarInner = styled.div`
   display: flex;
   justyfi-content: center;
   align-items: center;
+  pointer-events: none;
 `;
 
 export const AvatarInfo = styled.div`
@@ -54,6 +73,10 @@ export const AvatarInfo = styled.div`
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
+
+  @media (max-width: 780px) {
+    margin-left: 10px;
+  }
 `;
 
 export const Avatar = styled.img`
@@ -72,7 +95,7 @@ export const AvatarName = styled.h3`
 export const AvatarMessage = styled.h4`
   font-weight: 400;
   font-size: 14px;
-  line-height: 18px;
+  line-height: 24px;
   color: #c9c9cf;
 `;
 
@@ -81,10 +104,17 @@ export const ChatDate = styled.span`
   font-size: 10px;
   line-height: 18px;
   color: #222222;
+  pointer-evenets: none;
   display: flex;
   align-items: baseline;
   justify-content: center;
   height: 35px;
+
+  @media (max-width: 780px) {
+    justify-content: flex-end;
+    height: 100%;
+    width: 100%;
+  }
 `;
 
 export const Moon = styled.i`
@@ -97,4 +127,29 @@ export const Moon = styled.i`
     color: #fede00;
     transition: all 0.2s ease-in-out;
   }
+
+  @media (max-width: 780px) {
+    bottom: 90.5%;
+    left: 95%;
+  }
+`;
+
+export const WaitSection = styled.div`
+  width: 66%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  position: relative;
+`;
+
+export const WaitMessage = styled.span`
+  border-radius: 20px;
+  position: absolute;
+  background: #ccc;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 5px 50px;
+  color: #fff;
 `;

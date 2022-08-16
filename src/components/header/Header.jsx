@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import avatar from "../../img/avatar.jpg";
+import { useHttp } from "../../hooks/https.hook";
 
 const HeaderContainer = styled.header`
   width: 100%;
   height: 100%;
   border-bottom: 1px solid #d9d9d9;
+
+  @media (max-width: 780px) {
+    padding: 20px 0;
+  }
 `;
 
 const HeaderInner = styled.div`
@@ -13,6 +18,9 @@ const HeaderInner = styled.div`
   justify-content: space-around;
   align-items: center;
   padding: 15px 0;
+  @media (max-width: 780px) {
+    justify-content: space-evenly;
+  }
 `;
 
 const Logo = styled.div`
@@ -78,7 +86,36 @@ const CircleActive = styled.span`
 `;
 
 const Header = () => {
+  const { useDebounce } = useHttp();
   const [searchValue, setSearchValue] = useState("");
+  const searchTerm = useDebounce(searchValue.trim().toLowerCase(), 300);
+
+  const findUser = () => {
+    const usersName = document.querySelectorAll(".avatar-name");
+    let searchData = searchTerm;
+    if (searchData !== "") {
+      usersName.forEach(function (e) {
+        if (e.textContent.toLowerCase().search(searchData) === -1) {
+          e.parentElement.parentElement.parentElement.classList.add("hide");
+        } else {
+          e.parentElement.parentElement.parentElement.classList.remove("hide");
+        }
+      });
+    } else {
+      usersName.forEach((e) => {
+        e.parentElement.parentElement.parentElement.classList.remove("hide");
+      });
+    }
+  };
+
+  const handleSearch = () => {
+    findUser();
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchValue]);
+
   return (
     <HeaderContainer>
       <HeaderInner>
@@ -86,7 +123,7 @@ const Header = () => {
         <InputSearch>
           <i className="fas fa-search"></i>
           <Input
-            type="search"
+            className="input-search"
             placeholder="Search.."
             value={searchValue}
             onInput={(e) => setSearchValue(e.target.value)}
