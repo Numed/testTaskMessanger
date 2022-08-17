@@ -57,16 +57,38 @@ const SideMenu = () => {
   ]);
 
   const [selectedUser, setSelectedUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("dark-mode"));
+
+  useEffect(() => {
+    onDarkMode();
+    // eslint-disable-next-line
+  }, [darkMode]);
 
   const onDarkMode = () => {
     const moon = document.querySelector(".fa-moon");
-    moon.classList.toggle("active");
-    document.body.classList.toggle("dark-mode");
+    if (!localStorage.getItem("dark-mode")) {
+      moon.classList.add("active");
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("dark-mode", "dark");
+    } else {
+      if (darkMode === "dark") {
+        moon.classList.add("active");
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("dark-mode", "dark");
+      } else {
+        moon.classList.remove("active");
+        localStorage.setItem("dark-mode", "light");
+        document.body.classList.remove("dark-mode");
+      }
+    }
   };
 
   const content =
     selectedUser !== null ? (
-      <InfoContext.Provider value={{ info, setInfo, selectedUser }}>
+      <InfoContext.Provider
+        value={{ info, setInfo, selectedUser, messages, setMessages }}
+      >
         <ChatSide />
       </InfoContext.Provider>
     ) : (
@@ -81,6 +103,9 @@ const SideMenu = () => {
         <SideMenuContainer>
           <ChatList>
             {info.map(({ avatar, name, message, date }, i) => {
+              const filterMessage = messages.filter(
+                (user) => user.name === name
+              );
               return (
                 <Chat
                   key={i}
@@ -92,8 +117,15 @@ const SideMenu = () => {
                     <AvatarInfo>
                       <AvatarName className="avatar-name">{name}</AvatarName>
                       <AvatarMessage>
-                        {message.length > 30
-                          ? message.slice(0, 30).concat("...")
+                        {filterMessage[filterMessage.length - 1]
+                          ? filterMessage[filterMessage.length - 1].message
+                              .length > 30
+                            ? filterMessage[filterMessage.length - 1].message
+                                .slice(0, 30)
+                                .concat("..")
+                            : filterMessage[filterMessage.length - 1].message
+                          : message.length > 30
+                          ? message.slice(0, 30).concat("..")
                           : message}
                       </AvatarMessage>
                     </AvatarInfo>
@@ -103,7 +135,12 @@ const SideMenu = () => {
               );
             })}
           </ChatList>
-          <Moon className="fas fa-moon" onClick={() => onDarkMode()} />
+          <Moon
+            className="fas fa-moon"
+            onClick={() =>
+              darkMode === "light" ? setDarkMode("dark") : setDarkMode("light")
+            }
+          />
         </SideMenuContainer>
         {content}
       </Container>

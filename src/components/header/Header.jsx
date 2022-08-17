@@ -108,12 +108,8 @@ const Header = () => {
     }
   };
 
-  const handleSearch = () => {
-    findUser();
-  };
-
   useEffect(() => {
-    handleSearch();
+    findUser();
   }, [searchValue]);
 
   return (

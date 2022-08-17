@@ -39,8 +39,17 @@ body.dark-mode .input-search {
   transition: all .25s linear;
 }
 
-body.dark-mode .input-message {
+body.dark-mode .input-message,
+body.dark-mode .btn-submit {
   color: #888888;
   background-color: #303236;
   transition: all .25s linear;
+}
+
+body.dark-mode .chat-inner::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+}
+
+body.dark-mode .chat-inner::-webkit-scrollbar-track {
+  background-color: #27292d;
 }

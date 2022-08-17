@@ -112,14 +112,35 @@ export const InputSection = styled.div`
   padding: 20px 0;
 `;
 
+export const InputInner = styled.div`
+  position: relative;
+`;
+
 export const Input = styled.input`
   width: 430px;
   background: #faf8fc;
-  padding: 9px 20px;
+  padding: 9px 35px 9px 20px;
   border-radius: 8px;
   font-weight: 400;
+  letter-spacing: 1.1px;
   font-size: 12px;
   line-height: 15px;
   color: #888888;
   border: none;
+`;
+
+export const BtnSubmit = styled.button`
+  position: absolute;
+  top: 0;
+  height: 33px;
+  left: 92%;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  z-index: 3;
+  cursor: pointer;
+
+  i {
+    transform: scale(1.1);
+  }
 `;
