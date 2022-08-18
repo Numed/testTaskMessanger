@@ -4,17 +4,18 @@ import {
   MessageContainer,
   MyMessageText,
   MyContainer,
+  MyMessageContainer,
 } from "./style";
 
-const CreateMessage = ({ message, date }) => {
+const CreateMessage = ({ message, dateNow }) => {
   return (
     <MyContainer>
-      <MessageContainer>
-        <MyMessage>
+      <MyMessageContainer>
+        <MyMessage className="my-message">
           <MyMessageText>{message}</MyMessageText>
         </MyMessage>
-        <Date className="message-date">{date}</Date>
-      </MessageContainer>
+        <Date className="message-date">{dateNow}</Date>
+      </MyMessageContainer>
     </MyContainer>
   );
 };

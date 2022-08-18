@@ -3,6 +3,21 @@ import styled from "styled-components";
 export const ChatSideContainer = styled.section`
   width: 66%;
   height: 100%;
+  position: relative;
+  transition: all 0.25s linear;
+
+  @media (max-width: 660px) {
+    display: block;
+    width: 100%;
+  }
+
+  &.switch {
+    @media (max-width: 400px) {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      display: none !important;
+    }
+  }
 `;
 
 export const ChatContainerInner = styled.div`
@@ -20,6 +35,7 @@ export const ChatContainer = styled.div`
   align-items: center;
   justify-content: space-around;
   flex-direction: column;
+  position: relative;
 `;
 
 export const ChatInner = styled.div`
@@ -58,6 +74,18 @@ export const MessageContainer = styled.div`
   flex-direction: column;
   flex-basis: 350px;
   height: 100%;
+  align-items: flex-start;
+
+  @media (max-width: 660px) {
+    flex-basis: 300px;
+  }
+
+  @media (max-width: 400px) {
+    flex-basis: 260px;
+  }
+`;
+
+export const MyMessageContainer = styled(MessageContainer)`
   align-items: flex-end;
 `;
 
@@ -66,6 +94,11 @@ export const InterlocutorContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-top: 10px;
+
+  @media (max-width: 660px) {
+    margin-top: 15px;
+  }
 `;
 
 export const InterlocutorMessage = styled.div`
@@ -99,7 +132,7 @@ export const Date = styled.span`
   font-size: 10px;
   line-height: 12px;
   color: #222222;
-  margin-top: 5px;
+  margin: 5px 0 0 15px;
 `;
 
 export const InputSection = styled.div`
@@ -114,6 +147,13 @@ export const InputSection = styled.div`
 
 export const InputInner = styled.div`
   position: relative;
+
+  @media (max-width: 660px) {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 export const Input = styled.input`
@@ -127,6 +167,10 @@ export const Input = styled.input`
   line-height: 15px;
   color: #888888;
   border: none;
+
+  @media (max-width: 660px) {
+    width: 80%;
+  }
 `;
 
 export const BtnSubmit = styled.button`
@@ -143,4 +187,20 @@ export const BtnSubmit = styled.button`
   i {
     transform: scale(1.1);
   }
+
+  @media (max-width: 660px) {
+    left: 83%;
+  }
+`;
+
+export const BtnBack = styled.i`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: #faf8fc;
+  transform: scale(1.7);
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  left: 20px;
 `;

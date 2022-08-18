@@ -1,5 +1,5 @@
-import { useState, useContext, useEffect } from "react";
-import { Avatar, AvatarName } from "../SideMenu/style";
+import { useState, useContext } from "react";
+import { AvatarName } from "../SideMenu/style";
 import InfoContext from "../context/context";
 import {
   ChatContainer,
@@ -7,25 +7,33 @@ import {
   ChatInner,
   Input,
   InputSection,
-  InterlocutorContainer,
-  InterlocutorMessage,
-  MessageContainer,
-  MessageText,
-  MyContainer,
-  MyMessage,
-  MyMessageText,
   BtnSubmit,
-  Date,
   ChatSideContainer,
+  BtnBack,
   InputInner,
 } from "./style";
-import CreateMessage from "./CreateMessage";
+import CreateMyMessage from "./CreateMyMessage";
+import CreateInterlocutorMessage from "./CreateInterlocutorMessage";
+import { useHttp } from "../../hooks/https.hook";
+import Layout from "../layoutChat/LayoutChat";
+import ErrorMessage from "../errorMessage/ErrorMessage";
 
 const ChatSide = () => {
-  const { info, setInfo, selectedUser, messages, setMessages } =
-    useContext(InfoContext);
+  const {
+    selectedUser,
+    messages,
+    setMessages,
+    jokes,
+    setJokes,
+    toMain,
+    setToMain,
+  } = useContext(InfoContext);
   const [value, setValue] = useState("");
-  const { name, avatar, message } = selectedUser;
+  const { name, avatar } = selectedUser;
+  const { request } = useHttp();
+  const [error, setError] = useState(false);
+  let dateNow;
+  let dateSide;
 
   const handlerSubmit = () => {
     if (value !== "") {
@@ -33,85 +41,109 @@ const ChatSide = () => {
       const day = date.slice(0, 2);
       const month = date.slice(3, 5);
       const year = date.slice(8, 10);
+      const fullYear = date.slice(6, 10);
       const time = date.slice(12, 17);
-      const dateNow = `${month}/${day}/${year}, ${time}`;
+      const nameMonth = getMonth();
+      dateSide = `${nameMonth} ${day}, ${fullYear}`;
+      dateNow = `${month}/${day}/${year}, ${time}`;
       setMessages([
         ...messages,
-        { name: name, message: value.trim(), date: dateNow },
+        { name: name, message: value.trim(), date: dateSide, dateNow: dateNow },
       ]);
       setTimeout(() => {
         setValue("");
+        onRequest();
+        return dateNow;
       }, 100);
     }
   };
 
-  const Layout = () => {
-    return (
-      <>
-        <InterlocutorContainer>
-          <Avatar src={avatar} alt={name} />
-          <MessageContainer>
-            <InterlocutorMessage className="message-text">
-              <MessageText>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam, iusto facilis accusantium ipsam voluptate asperiores
-                perferendis possimus harum! Itaque est at sit deserunt expedita
-                consequatur aut culpa, autem quod libero.
-              </MessageText>
-            </InterlocutorMessage>
-            <Date className="message-date">08/15/22, 15:30</Date>
-          </MessageContainer>
-        </InterlocutorContainer>
-        <MyContainer>
-          <MessageContainer>
-            <MyMessage>
-              <MyMessageText>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam, iusto facilis accusantium.
-              </MyMessageText>
-            </MyMessage>
-            <Date className="message-date">08/15/22, 15:38</Date>
-          </MessageContainer>
-        </MyContainer>
-        <InterlocutorContainer>
-          <Avatar src={avatar} alt={name} />
-          <MessageContainer>
-            <InterlocutorMessage className="message-text">
-              <MessageText>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam, iusto facilis accusantium ipsam voluptate asperiores
-                perferendis possimus harum!
-              </MessageText>
-            </InterlocutorMessage>
-            <Date className="message-date">08/15/22, 15:40</Date>
-          </MessageContainer>
-        </InterlocutorContainer>
-        <MyContainer>
-          <MessageContainer>
-            <MyMessage>
-              <MyMessageText>{message}</MyMessageText>
-            </MyMessage>
-            <Date className="message-date">08/15/22, 15:40</Date>
-          </MessageContainer>
-        </MyContainer>
-      </>
-    );
+  const getMonth = () => {
+    const month = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const date = new Date();
+    const nameMonth = month[date.getMonth()];
+    return nameMonth;
   };
 
-  const layoutMessage = <Layout />;
+  const onRequest = () => {
+    request("https://api.chucknorris.io/jokes/random")
+      .then(onGetJoke)
+      .catch(onError);
+  };
+
+  const onGetJoke = (info) => {
+    setTimeout(() => {
+      setJokes([
+        ...jokes,
+        { avatar, name, date: dateSide, message: info.value, dateNow: dateNow },
+      ]);
+    }, 10000);
+  };
+
+  const onError = (e) => {
+    setError(true);
+  };
+
+  const displayMyMessage = messages
+    .filter((user) => user.name === name)
+    .map(({ message, dateNow }, id) => (
+      <CreateMyMessage key={id} message={message} dateNow={dateNow} />
+    ));
+
+  const displayAnotherMessage = jokes
+    .filter((user) => user.name === name)
+    .map(({ avatar, name, message, dateNow }, id) => (
+      <CreateInterlocutorMessage
+        key={id}
+        avatar={avatar}
+        name={name}
+        dateNow={dateNow}
+        value={message}
+      />
+    ));
+
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const content = !error
+    ? messages.length === jokes.length
+      ? [displayMyMessage, displayAnotherMessage]
+      : messages.length !== jokes.length
+      ? [displayAnotherMessage, displayMyMessage]
+      : [displayMyMessage, displayAnotherMessage]
+    : null;
+
+  const switchSection = () => {
+    const chatSide = document.querySelector(".chat-side__container");
+    chatSide.classList.add("switch");
+    const sideMenu = document.querySelector(".clicked");
+    sideMenu.classList.remove("clicked");
+  };
 
   return (
-    <ChatSideContainer>
+    <ChatSideContainer className="chat-side__container">
+      {errorMessage}
       <ChatContainerInner>
         <ChatContainer>
+          <BtnBack
+            className="fas fa-long-arrow-alt-left"
+            onClick={switchSection}
+          />
           <AvatarName className="chat-avatar__name">{name}</AvatarName>
           <ChatInner className="chat-inner">
-            {layoutMessage}
-            {messages
-              .filter((user) => user.name === name)
-              .map(({ message, date }, id) => (
-                <CreateMessage key={id} message={message} date={date} />
-              ))}
+            <Layout />
+            {content}
           </ChatInner>
         </ChatContainer>
         <InputSection>

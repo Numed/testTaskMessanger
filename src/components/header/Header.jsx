@@ -11,6 +11,10 @@ const HeaderContainer = styled.header`
   @media (max-width: 780px) {
     padding: 20px 0;
   }
+
+  @media (max-width: 400px) {
+    padding: 20px 10px;
+  }
 `;
 
 const HeaderInner = styled.div`
@@ -20,6 +24,10 @@ const HeaderInner = styled.div`
   padding: 15px 0;
   @media (max-width: 780px) {
     justify-content: space-evenly;
+  }
+
+  @media (max-width: 400px) {
+    justify-content: space-between;
   }
 `;
 
@@ -63,6 +71,11 @@ const Input = styled.input`
     border: none;
     outline: none;
   }
+
+  @media (max-width: 660px) {
+    width: 130px;
+    padding-right: 20px;
+  }
 `;
 
 const Avatar = styled.div`
@@ -83,12 +96,34 @@ const CircleActive = styled.span`
   left: 65%;
   border-radius: 8px;
   z-index: 2;
+
+  @media (max-width: 400px) {
+    left: 60%;
+  }
 `;
 
 const Header = () => {
   const { useDebounce } = useHttp();
   const [searchValue, setSearchValue] = useState("");
   const searchTerm = useDebounce(searchValue.trim().toLowerCase(), 300);
+
+  const showSideMenu = () => {
+    // if (sideChat.classList.contains("show")) {
+    //   sideChat.classList.remove("show");
+    //   sideMenu.classList.remove("clicked");
+    // }
+    //   if (sideMenu.classList.contains("clicked")) {
+    //     setTimeout(() => {
+    //       sideChat.style.display = "none";
+    //       sideMenu.style.display = "block";
+    //       sideMenu.classList.remove("clicked");
+    //     }, 250);
+    //     sideMenu.style.opacity = "1";
+    //     sideMenu.style.visibility = "visible";
+    //     sideChat.style.opacity = "0";
+    //     sideChat.style.visibility = "hidden";
+    //   }
+  };
 
   const findUser = () => {
     const usersName = document.querySelectorAll(".avatar-name");
@@ -115,7 +150,7 @@ const Header = () => {
   return (
     <HeaderContainer>
       <HeaderInner>
-        <Logo>M</Logo>
+        <Logo onClick={showSideMenu()}>M</Logo>
         <InputSearch>
           <i className="fas fa-search"></i>
           <Input

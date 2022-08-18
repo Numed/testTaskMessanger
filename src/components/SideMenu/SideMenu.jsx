@@ -21,6 +21,7 @@ import {
 } from "./style";
 import ChatSide from "../chatSide/ChatSide";
 import InfoContext from "../context/context";
+import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
 const SideMenu = () => {
   const [info, setInfo] = useState([
@@ -58,6 +59,7 @@ const SideMenu = () => {
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [jokes, setJokes] = useState([]);
   const [darkMode, setDarkMode] = useState(localStorage.getItem("dark-mode"));
 
   useEffect(() => {
@@ -86,51 +88,85 @@ const SideMenu = () => {
 
   const content =
     selectedUser !== null ? (
-      <InfoContext.Provider
-        value={{ info, setInfo, selectedUser, messages, setMessages }}
-      >
-        <ChatSide />
-      </InfoContext.Provider>
+      <ErrorBoundary key={selectedUser.name}>
+        <InfoContext.Provider
+          value={{
+            selectedUser,
+            messages,
+            setMessages,
+            jokes,
+            setJokes,
+          }}
+        >
+          <ChatSide />
+        </InfoContext.Provider>
+      </ErrorBoundary>
     ) : (
       <WaitSection>
         <WaitMessage className="wait-message">Select some chat</WaitMessage>
       </WaitSection>
     );
 
+  const switchMenu = () => {
+    const sideMenu = document.querySelector(".side-container");
+    const chatSide = document.querySelector(".switch");
+    if (chatSide) {
+      chatSide.classList.remove("switch");
+    }
+    sideMenu.classList.add("clicked");
+  };
+
   return (
     <>
       <Container>
-        <SideMenuContainer>
+        <SideMenuContainer className="side-container">
           <ChatList>
             {info.map(({ avatar, name, message, date }, i) => {
               const filterMessage = messages.filter(
                 (user) => user.name === name
               );
+              const lastFilteredElementMessage =
+                filterMessage[filterMessage.length - 1];
+
+              const filterJokes = jokes.filter((user) => user.name === name);
+              const lastFilteredElementJoke =
+                filterJokes[filterJokes.length - 1];
               return (
                 <Chat
                   key={i}
                   className="chat"
-                  onClick={() => setSelectedUser({ avatar, name, message })}
+                  onClick={(e) =>
+                    setSelectedUser({ avatar, name, message }, switchMenu())
+                  }
                 >
                   <AvatarInner>
                     <Avatar src={avatar} alt={name} />
                     <AvatarInfo>
                       <AvatarName className="avatar-name">{name}</AvatarName>
                       <AvatarMessage>
-                        {filterMessage[filterMessage.length - 1]
-                          ? filterMessage[filterMessage.length - 1].message
-                              .length > 30
-                            ? filterMessage[filterMessage.length - 1].message
+                        {filterMessage.length === 0 && filterJokes.length === 0
+                          ? message
+                          : filterJokes.length === filterMessage.length
+                          ? lastFilteredElementJoke.message.length > 30
+                            ? lastFilteredElementJoke.message
                                 .slice(0, 30)
                                 .concat("..")
-                            : filterMessage[filterMessage.length - 1].message
-                          : message.length > 30
-                          ? message.slice(0, 30).concat("..")
-                          : message}
+                            : lastFilteredElementJoke.message
+                          : lastFilteredElementMessage.message.length > 30
+                          ? lastFilteredElementMessage.message
+                              .slice(0, 30)
+                              .concat("..")
+                          : lastFilteredElementMessage.message}
                       </AvatarMessage>
                     </AvatarInfo>
                   </AvatarInner>
-                  <ChatDate className="message-date">{date}</ChatDate>
+                  <ChatDate className="message-date">
+                    {filterMessage.length === 0 && filterJokes.length === 0
+                      ? date
+                      : filterJokes.length === filterMessage.length
+                      ? lastFilteredElementJoke.date
+                      : lastFilteredElementMessage.date}
+                  </ChatDate>
                 </Chat>
               );
             })}

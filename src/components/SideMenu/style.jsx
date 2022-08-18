@@ -7,11 +7,27 @@ export const Container = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  @media (max-width: 660px) {
+    justify-content: flex-start;
+    align-items: center;
+  }
 `;
 
 export const SideMenuContainer = styled.section`
   width: 33%;
   height: 100%;
+  transition: all 0.25s linear;
+  @media (max-width: 660px) {
+    width: 95%;
+  }
+
+  &.clicked {
+    @media (max-width: 660px) {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+  }
 `;
 
 export const ChatList = styled.ul`
@@ -58,6 +74,19 @@ export const Chat = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
+
+  &.clicked {
+    display: none;
+  }
+
+  &.clicked ~ .chat-side__container {
+    display: flex;
+  }
+
+  @media (max-width: 660px) {
+    width: 100%;
+    flex-direction: row;
+  }
 `;
 
 export const AvatarInner = styled.div`
@@ -65,6 +94,10 @@ export const AvatarInner = styled.div`
   justyfi-content: center;
   align-items: center;
   pointer-events: none;
+
+  @media (max-width: 660px) {
+    width: 90%;
+  }
 `;
 
 export const AvatarInfo = styled.div`
@@ -115,6 +148,10 @@ export const ChatDate = styled.span`
     height: 100%;
     width: 100%;
   }
+
+  @media (max-width: 660px) {
+    width: 30%;
+  }
 `;
 
 export const Moon = styled.i`
@@ -132,6 +169,15 @@ export const Moon = styled.i`
     bottom: 90.5%;
     left: 95%;
   }
+
+  @media (max-width: 660px) {
+    left: 93%;
+    display: block;
+  }
+
+  @media (max-width: 400px) {
+    left: 71%;
+  }
 `;
 
 export const WaitSection = styled.div`
@@ -141,6 +187,10 @@ export const WaitSection = styled.div`
   align-items: center;
   height: 500px;
   position: relative;
+
+  @media (max-width: 660px) {
+    display: none;
+  }
 `;
 
 export const WaitMessage = styled.span`
