@@ -17,21 +17,16 @@ import CreateInterlocutorMessage from "./CreateInterlocutorMessage";
 import { useHttp } from "../../hooks/https.hook";
 import Layout from "../layoutChat/LayoutChat";
 import ErrorMessage from "../errorMessage/ErrorMessage";
+import { getMonth } from "../../helpers/getData";
 
 const ChatSide = () => {
-  const {
-    selectedUser,
-    messages,
-    setMessages,
-    jokes,
-    setJokes,
-    toMain,
-    setToMain,
-  } = useContext(InfoContext);
+  const { selectedUser, messages, setMessages, countMessage, setCountMessage } =
+    useContext(InfoContext);
   const [value, setValue] = useState("");
   const { name, avatar } = selectedUser;
   const { request } = useHttp();
   const [error, setError] = useState(false);
+  const [count, setCount] = useState(1);
   let dateNow;
   let dateSide;
 
@@ -46,36 +41,30 @@ const ChatSide = () => {
       const nameMonth = getMonth();
       dateSide = `${nameMonth} ${day}, ${fullYear}`;
       dateNow = `${month}/${day}/${year}, ${time}`;
+      const history = messages;
       setMessages([
         ...messages,
-        { name: name, message: value.trim(), date: dateSide, dateNow: dateNow },
+        {
+          name: name,
+          message: value.trim(),
+          date: dateSide,
+          dateNow: dateNow,
+          isBot: false,
+        },
       ]);
+      history.push({
+        name: name,
+        message: value.trim(),
+        date: dateSide,
+        dateNow: dateNow,
+        isBot: false,
+      });
+      localStorage.setItem("history-messages", JSON.stringify(history));
       setTimeout(() => {
         setValue("");
         onRequest();
-        return dateNow;
       }, 100);
     }
-  };
-
-  const getMonth = () => {
-    const month = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const date = new Date();
-    const nameMonth = month[date.getMonth()];
-    return nameMonth;
   };
 
   const onRequest = () => {
@@ -85,44 +74,57 @@ const ChatSide = () => {
   };
 
   const onGetJoke = (info) => {
+    setCount((count) => count + 1);
+    const history = messages;
     setTimeout(() => {
-      setJokes([
-        ...jokes,
-        { avatar, name, date: dateSide, message: info.value, dateNow: dateNow },
+      setMessages((old) => [
+        ...old,
+        {
+          avatar,
+          name,
+          date: dateSide,
+          message: info.value,
+          dateNow: dateNow,
+          isBot: true,
+        },
       ]);
-    }, 10000);
+      setCountMessage([...countMessage, { name, count }]);
+    }, 1000);
+    history.push({
+      avatar,
+      name,
+      date: dateSide,
+      message: info.value,
+      dateNow: dateNow,
+      isBot: true,
+    });
+    localStorage.setItem("history-messages", JSON.stringify(history));
   };
 
   const onError = (e) => {
     setError(true);
   };
 
-  const displayMyMessage = messages
-    .filter((user) => user.name === name)
-    .map(({ message, dateNow }, id) => (
-      <CreateMyMessage key={id} message={message} dateNow={dateNow} />
-    ));
-
-  const displayAnotherMessage = jokes
-    .filter((user) => user.name === name)
-    .map(({ avatar, name, message, dateNow }, id) => (
-      <CreateInterlocutorMessage
-        key={id}
-        avatar={avatar}
-        name={name}
-        dateNow={dateNow}
-        value={message}
-      />
-    ));
-
   const errorMessage = error ? <ErrorMessage /> : null;
-  const content = !error
-    ? messages.length === jokes.length
-      ? [displayMyMessage, displayAnotherMessage]
-      : messages.length !== jokes.length
-      ? [displayAnotherMessage, displayMyMessage]
-      : [displayMyMessage, displayAnotherMessage]
-    : null;
+  const content =
+    !error &&
+    messages
+      .filter((user) => user.name === name)
+      .map(({ avatar, name, message, dateNow, isBot }, id) => (
+        <>
+          {isBot ? (
+            <CreateInterlocutorMessage
+              key={id}
+              avatar={avatar}
+              name={name}
+              dateNow={dateNow}
+              value={message}
+            />
+          ) : (
+            <CreateMyMessage key={id} message={message} dateNow={dateNow} />
+          )}
+        </>
+      ));
 
   const switchSection = () => {
     const chatSide = document.querySelector(".chat-side__container");

@@ -94,6 +94,7 @@ export const AvatarInner = styled.div`
   justyfi-content: center;
   align-items: center;
   pointer-events: none;
+  position: relative;
 
   @media (max-width: 660px) {
     width: 90%;
@@ -117,6 +118,24 @@ export const Avatar = styled.img`
   height: 32px;
 `;
 
+export const MessageCount = styled.span`
+  color: #fff;
+  background: #78866b;
+  width: 24px;
+  height: 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  position: absolute;
+  top: 0%;
+  right: 95%;
+
+  &.display {
+    display: flex;
+  }
+`;
+
 export const AvatarName = styled.h3`
   font-weight: 400;
   font-size: 18px;
@@ -137,7 +156,7 @@ export const ChatDate = styled.span`
   font-size: 10px;
   line-height: 18px;
   color: #222222;
-  pointer-evenets: none;
+  pointer-events: none;
   display: flex;
   align-items: baseline;
   justify-content: center;

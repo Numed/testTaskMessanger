@@ -194,13 +194,16 @@ export const BtnSubmit = styled.button`
 `;
 
 export const BtnBack = styled.i`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  color: #faf8fc;
-  transform: scale(1.7);
-  cursor: pointer;
-  position: absolute;
-  top: 0px;
-  left: 20px;
+  display: none;
+  @media (max-width: 660px) {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    color: #faf8fc;
+    transform: scale(1.7);
+    cursor: pointer;
+    position: absolute;
+    top: 0px;
+    left: 20px;
+  }
 `;

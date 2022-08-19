@@ -1,9 +1,4 @@
 import { useEffect, useState } from "react";
-import alex from "../../img/ChatAvatar/Alex.png";
-import emma from "../../img/ChatAvatar/Emma.png";
-import eveline from "../../img/ChatAvatar/Eveline.png";
-import sophia from "../../img/ChatAvatar/Sophia.png";
-import peter from "../../img/ChatAvatar/Peter.png";
 import {
   Container,
   Chat,
@@ -18,48 +13,22 @@ import {
   SideMenuContainer,
   WaitSection,
   WaitMessage,
+  MessageCount,
 } from "./style";
 import ChatSide from "../chatSide/ChatSide";
 import InfoContext from "../context/context";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import contacts from "../data/contacts";
 
 const SideMenu = () => {
-  const [info, setInfo] = useState([
-    {
-      avatar: alex,
-      name: "Alex Adam",
-      message: "Hello there! How are you?",
-      date: "Aug 15, 2022",
-    },
-    {
-      avatar: emma,
-      name: "Emma",
-      message: "I need to talk with you. NOW!",
-      date: "Aug 16, 2022",
-    },
-    {
-      avatar: eveline,
-      name: "Eveline",
-      message: "Glad for Ukraine!",
-      date: "Aug 16, 2022",
-    },
-    {
-      avatar: sophia,
-      name: "Sophia Noir",
-      message: "I’m glad to see you here :)",
-      date: "Aug 16, 2022",
-    },
-    {
-      avatar: peter,
-      name: "Peter Border",
-      message: "Sup, bro? Wanna go to party?",
-      date: "Aug 16, 2022",
-    },
-  ]);
-
+  const [info, setInfo] = useState(contacts);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [jokes, setJokes] = useState([]);
+  const [messages, setMessages] = useState(
+    JSON.parse(localStorage.getItem("history-messages"))
+      ? JSON.parse(localStorage.getItem("history-messages"))
+      : []
+  );
+  const [countMessage, setCountMessage] = useState([]);
   const [darkMode, setDarkMode] = useState(localStorage.getItem("dark-mode"));
 
   useEffect(() => {
@@ -86,6 +55,65 @@ const SideMenu = () => {
     }
   };
 
+  const switchMenu = () => {
+    const sideMenu = document.querySelector(".side-container");
+    const chatSide = document.querySelector(".switch");
+    if (chatSide) {
+      chatSide.classList.remove("switch");
+    }
+    sideMenu.classList.add("clicked");
+  };
+
+  const displayCounter = (e) => {
+    const chats = document.querySelectorAll(".chat");
+    const avatarNames = document.querySelectorAll(".avatar-name");
+    const counterMessages = document.querySelectorAll(".message-counter");
+    for (const avatarName of avatarNames) {
+      if (avatarName.textContent === e) {
+        for (const chat of chats) {
+          if (chat.contains(avatarName)) {
+            for (const counterMessage of counterMessages) {
+              if (chat.contains(avatarName) && chat.contains(counterMessage)) {
+                counterMessage.classList.add("display");
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const removeDisplay = (e) => {
+    const chats = document.querySelectorAll(".chat");
+    const avatarNames = document.querySelectorAll(".avatar-name");
+    const counterMessages = document.querySelectorAll(".message-counter");
+    for (const avatarName of avatarNames) {
+      if (avatarName.textContent === e) {
+        for (const chat of chats) {
+          if (chat.contains(avatarName)) {
+            for (const counterMessage of counterMessages) {
+              if (chat.contains(avatarName) && chat.contains(counterMessage)) {
+                counterMessage.classList.remove("display");
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    if (messages[messages.length - 1]) {
+      const currentChat = info;
+      const activeChat = currentChat.filter(
+        (item) => item.name === messages[messages.length - 1]?.name
+      );
+      const index = info.indexOf(activeChat[0]);
+      currentChat.splice(index, 1);
+      currentChat.unshift(activeChat[0]);
+      setInfo(currentChat);
+    }
+  }, [messages]);
+
   const content =
     selectedUser !== null ? (
       <ErrorBoundary key={selectedUser.name}>
@@ -94,8 +122,8 @@ const SideMenu = () => {
             selectedUser,
             messages,
             setMessages,
-            jokes,
-            setJokes,
+            countMessage,
+            setCountMessage,
           }}
         >
           <ChatSide />
@@ -107,30 +135,22 @@ const SideMenu = () => {
       </WaitSection>
     );
 
-  const switchMenu = () => {
-    const sideMenu = document.querySelector(".side-container");
-    const chatSide = document.querySelector(".switch");
-    if (chatSide) {
-      chatSide.classList.remove("switch");
-    }
-    sideMenu.classList.add("clicked");
-  };
-
   return (
     <>
       <Container>
         <SideMenuContainer className="side-container">
           <ChatList>
             {info.map(({ avatar, name, message, date }, i) => {
-              const filterMessage = messages.filter(
+              const filterMessage = messages?.filter(
                 (user) => user.name === name
               );
               const lastFilteredElementMessage =
                 filterMessage[filterMessage.length - 1];
 
-              const filterJokes = jokes.filter((user) => user.name === name);
-              const lastFilteredElementJoke =
-                filterJokes[filterJokes.length - 1];
+              const countsMessage = countMessage.filter(
+                (user) => user.name === name
+              );
+              const lastCountsMessage = countsMessage[countsMessage.length - 1];
               return (
                 <Chat
                   key={i}
@@ -141,17 +161,33 @@ const SideMenu = () => {
                 >
                   <AvatarInner>
                     <Avatar src={avatar} alt={name} />
+                    <MessageCount
+                      className="message-counter"
+                      style={
+                        countsMessage.length !== 0
+                          ? countsMessage.length !== 0 &&
+                            lastCountsMessage.count !== 0
+                            ? displayCounter(lastCountsMessage.name)
+                            : null
+                          : null
+                      }
+                    >
+                      {countsMessage.length !== 0
+                        ? lastCountsMessage.name === selectedUser.name
+                          ? lastCountsMessage.count !== 0
+                            ? [
+                                (lastCountsMessage.count = 0),
+                                removeDisplay(lastCountsMessage.name),
+                              ]
+                            : null
+                          : lastCountsMessage.count
+                        : null}
+                    </MessageCount>
                     <AvatarInfo>
                       <AvatarName className="avatar-name">{name}</AvatarName>
                       <AvatarMessage>
-                        {filterMessage.length === 0 && filterJokes.length === 0
+                        {filterMessage.length === 0
                           ? message
-                          : filterJokes.length === filterMessage.length
-                          ? lastFilteredElementJoke.message.length > 30
-                            ? lastFilteredElementJoke.message
-                                .slice(0, 30)
-                                .concat("..")
-                            : lastFilteredElementJoke.message
                           : lastFilteredElementMessage.message.length > 30
                           ? lastFilteredElementMessage.message
                               .slice(0, 30)
@@ -161,10 +197,8 @@ const SideMenu = () => {
                     </AvatarInfo>
                   </AvatarInner>
                   <ChatDate className="message-date">
-                    {filterMessage.length === 0 && filterJokes.length === 0
+                    {filterMessage.length === 0
                       ? date
-                      : filterJokes.length === filterMessage.length
-                      ? lastFilteredElementJoke.date
                       : lastFilteredElementMessage.date}
                   </ChatDate>
                 </Chat>
