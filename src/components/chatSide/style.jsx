@@ -208,7 +208,7 @@ export const BtnBack = styled.i`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    color: #faf8fc;
+    color: #303236;
     transform: scale(1.7);
     cursor: pointer;
     position: absolute;
