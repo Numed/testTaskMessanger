@@ -21,10 +21,14 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 import contacts from "../data/contacts";
 
 const SideMenu = () => {
-  const [info, setInfo] = useState(contacts);
+  const [info, setInfo] = useState(
+    localStorage.getItem("history-chat-list")
+      ? JSON.parse(localStorage.getItem("history-chat-list"))
+      : contacts
+  );
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState(
-    JSON.parse(localStorage.getItem("history-messages"))
+    localStorage.getItem("history-messages")
       ? JSON.parse(localStorage.getItem("history-messages"))
       : []
   );
@@ -35,6 +39,25 @@ const SideMenu = () => {
     onDarkMode();
     // eslint-disable-next-line
   }, [darkMode]);
+
+  useEffect(() => {
+    sortChats();
+    // eslint-disable-next-line
+  }, [messages, info]);
+
+  const sortChats = () => {
+    if (messages[messages.length - 1]) {
+      const currentChat = info;
+      const activeChat = currentChat.filter(
+        (item) => item.name === messages[messages.length - 1]?.name
+      );
+      const index = info.indexOf(activeChat[0]);
+      currentChat.splice(index, 1);
+      currentChat.unshift(activeChat[0]);
+      localStorage.setItem("history-chat-list", JSON.stringify(currentChat));
+      setInfo(currentChat);
+    }
+  };
 
   const onDarkMode = () => {
     const moon = document.querySelector(".fa-moon");
@@ -101,18 +124,6 @@ const SideMenu = () => {
       }
     }
   };
-  useEffect(() => {
-    if (messages[messages.length - 1]) {
-      const currentChat = info;
-      const activeChat = currentChat.filter(
-        (item) => item.name === messages[messages.length - 1]?.name
-      );
-      const index = info.indexOf(activeChat[0]);
-      currentChat.splice(index, 1);
-      currentChat.unshift(activeChat[0]);
-      setInfo(currentChat);
-    }
-  }, [messages]);
 
   const content =
     selectedUser !== null ? (
@@ -141,7 +152,7 @@ const SideMenu = () => {
         <SideMenuContainer className="side-container">
           <ChatList>
             {info.map(({ avatar, name, message, date }, i) => {
-              const filterMessage = messages?.filter(
+              const filterMessage = messages.filter(
                 (user) => user.name === name
               );
               const lastFilteredElementMessage =
@@ -173,7 +184,10 @@ const SideMenu = () => {
                       }
                     >
                       {countsMessage.length !== 0
-                        ? lastCountsMessage.name === selectedUser.name
+                        ? lastCountsMessage.name === selectedUser.name &&
+                          document
+                            .querySelector(".side-container")
+                            .classList.contains("clicked")
                           ? lastCountsMessage.count !== 0
                             ? [
                                 (lastCountsMessage.count = 0),
@@ -181,7 +195,7 @@ const SideMenu = () => {
                               ]
                             : null
                           : lastCountsMessage.count
-                        : null}
+                        : removeDisplay(countMessage.name)}
                     </MessageCount>
                     <AvatarInfo>
                       <AvatarName className="avatar-name">{name}</AvatarName>

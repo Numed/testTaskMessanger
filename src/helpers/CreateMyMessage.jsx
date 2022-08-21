@@ -1,15 +1,14 @@
 import {
   Date,
   MyMessage,
-  MessageContainer,
   MyMessageText,
   MyContainer,
   MyMessageContainer,
-} from "./style";
+} from "../components/chatSide/style";
 
 const CreateMessage = ({ message, dateNow }) => {
   return (
-    <MyContainer>
+    <MyContainer className="my-container">
       <MyMessageContainer>
         <MyMessage className="my-message">
           <MyMessageText>{message}</MyMessageText>

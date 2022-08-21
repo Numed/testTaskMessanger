@@ -91,7 +91,6 @@ export const Chat = styled.div`
 
 export const AvatarInner = styled.div`
   display: flex;
-  justyfi-content: center;
   align-items: center;
   pointer-events: none;
   position: relative;

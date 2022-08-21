@@ -4,13 +4,13 @@ import {
   MessageContainer,
   MessageText,
   Date,
-} from "./style";
+} from "../components/chatSide/style";
 
-import { Avatar } from "../SideMenu/style";
+import { Avatar } from "../components/SideMenu/style";
 
 const CreateInretlocuterMessage = ({ avatar, name, value, dateNow }) => {
   return (
-    <InterlocutorContainer>
+    <InterlocutorContainer className="interlocutor-container">
       <Avatar src={avatar} alt={name} />
       <MessageContainer>
         <InterlocutorMessage className="message-text">

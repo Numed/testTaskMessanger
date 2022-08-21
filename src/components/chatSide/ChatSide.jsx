@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AvatarName } from "../SideMenu/style";
 import InfoContext from "../context/context";
 import {
@@ -9,15 +9,19 @@ import {
   InputSection,
   BtnSubmit,
   ChatSideContainer,
+  TotalDivMessage,
   BtnBack,
   InputInner,
 } from "./style";
-import CreateMyMessage from "./CreateMyMessage";
-import CreateInterlocutorMessage from "./CreateInterlocutorMessage";
+import CreateMyMessage from "../../helpers/CreateMyMessage";
+import CreateInterlocutorMessage from "../../helpers/CreateInterlocutorMessage";
 import { useHttp } from "../../hooks/https.hook";
 import Layout from "../layoutChat/LayoutChat";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import { getMonth } from "../../helpers/getData";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ToastifyMessage from "../toastifyMessage/ToastifyMessage";
 
 const ChatSide = () => {
   const { selectedUser, messages, setMessages, countMessage, setCountMessage } =
@@ -26,11 +30,34 @@ const ChatSide = () => {
   const { name, avatar } = selectedUser;
   const { request } = useHttp();
   const [error, setError] = useState(false);
-  const [count, setCount] = useState(1);
+  let count = 0;
   let dateNow;
   let dateSide;
 
-  const handlerSubmit = () => {
+  useEffect(() => {
+    localStorage.setItem("history-messages", JSON.stringify(messages));
+  }, [messages]);
+
+  const notify = (message, avatar, name) => {
+    const sideMenu = document.querySelector(".clicked");
+    if (sideMenu && selectedUser.name === name) {
+      return toast(
+        <ToastifyMessage message={message} avatar={avatar} name={name} />,
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: localStorage.getItem("dark-mode"),
+        }
+      );
+    }
+  };
+
+  const handlerSubmit = async () => {
     if (value !== "") {
       const date = new window.Date().toLocaleString();
       const day = date.slice(0, 2);
@@ -41,7 +68,6 @@ const ChatSide = () => {
       const nameMonth = getMonth();
       dateSide = `${nameMonth} ${day}, ${fullYear}`;
       dateNow = `${month}/${day}/${year}, ${time}`;
-      const history = messages;
       setMessages([
         ...messages,
         {
@@ -52,18 +78,8 @@ const ChatSide = () => {
           isBot: false,
         },
       ]);
-      history.push({
-        name: name,
-        message: value.trim(),
-        date: dateSide,
-        dateNow: dateNow,
-        isBot: false,
-      });
-      localStorage.setItem("history-messages", JSON.stringify(history));
-      setTimeout(() => {
-        setValue("");
-        onRequest();
-      }, 100);
+      setValue("");
+      onRequest();
     }
   };
 
@@ -73,10 +89,10 @@ const ChatSide = () => {
       .catch(onError);
   };
 
-  const onGetJoke = (info) => {
-    setCount((count) => count + 1);
-    const history = messages;
+  const onGetJoke = async (info) => {
     setTimeout(() => {
+      count += 1;
+      setCountMessage((old) => [...old, { name, count: count }]);
       setMessages((old) => [
         ...old,
         {
@@ -88,21 +104,21 @@ const ChatSide = () => {
           isBot: true,
         },
       ]);
-      setCountMessage([...countMessage, { name, count }]);
-    }, 1000);
-    history.push({
-      avatar,
-      name,
-      date: dateSide,
-      message: info.value,
-      dateNow: dateNow,
-      isBot: true,
-    });
-    localStorage.setItem("history-messages", JSON.stringify(history));
+      notify(info.value, avatar, name);
+    }, 10000);
+    return count;
   };
+  console.log("COUTNS IN CHAT", count);
 
   const onError = (e) => {
     setError(true);
+  };
+
+  const switchSection = () => {
+    const chatSide = document.querySelector(".chat-side__container");
+    const sideMenu = document.querySelector(".clicked");
+    sideMenu.classList.remove("clicked");
+    chatSide.classList.add("switch");
   };
 
   const errorMessage = error ? <ErrorMessage /> : null;
@@ -111,7 +127,7 @@ const ChatSide = () => {
     messages
       .filter((user) => user.name === name)
       .map(({ avatar, name, message, dateNow, isBot }, id) => (
-        <>
+        <TotalDivMessage key={id}>
           {isBot ? (
             <CreateInterlocutorMessage
               key={id}
@@ -123,52 +139,61 @@ const ChatSide = () => {
           ) : (
             <CreateMyMessage key={id} message={message} dateNow={dateNow} />
           )}
-        </>
+        </TotalDivMessage>
       ));
 
-  const switchSection = () => {
-    const chatSide = document.querySelector(".chat-side__container");
-    chatSide.classList.add("switch");
-    const sideMenu = document.querySelector(".clicked");
-    sideMenu.classList.remove("clicked");
-  };
-
   return (
-    <ChatSideContainer className="chat-side__container">
-      {errorMessage}
-      <ChatContainerInner>
-        <ChatContainer>
-          <BtnBack
-            className="fas fa-long-arrow-alt-left"
-            onClick={switchSection}
-          />
-          <AvatarName className="chat-avatar__name">{name}</AvatarName>
-          <ChatInner className="chat-inner">
-            <Layout />
-            {content}
-          </ChatInner>
-        </ChatContainer>
-        <InputSection>
-          <InputInner>
-            <Input
-              className="input-message"
-              type="text"
-              value={value}
-              onKeyUp={(e) => {
-                if (e.key === "Enter") {
-                  handlerSubmit(e);
-                }
-              }}
-              onInput={(e) => setValue(e.target.value)}
-              placeholder="Type your message here"
+    <>
+      <ChatSideContainer className="chat-side__container">
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        {errorMessage}
+        <ChatContainerInner>
+          <ChatContainer>
+            <BtnBack
+              className="fas fa-long-arrow-alt-left"
+              onClick={switchSection}
             />
-            <BtnSubmit onClick={(e) => handlerSubmit(e)} className="btn-submit">
-              <i className="far fa-paper-plane"></i>
-            </BtnSubmit>
-          </InputInner>
-        </InputSection>
-      </ChatContainerInner>
-    </ChatSideContainer>
+            <AvatarName className="chat-avatar__name">{name}</AvatarName>
+            <ChatInner className="chat-inner">
+              <Layout />
+              {content}
+            </ChatInner>
+          </ChatContainer>
+          <InputSection>
+            <InputInner>
+              <Input
+                className="input-message"
+                type="text"
+                value={value}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    handlerSubmit(e);
+                  }
+                }}
+                onInput={(e) => setValue(e.target.value)}
+                placeholder="Type your message here"
+              />
+              <BtnSubmit
+                className="btn-submit"
+                onClick={(e) => handlerSubmit(e)}
+              >
+                <i className="far fa-paper-plane"></i>
+              </BtnSubmit>
+            </InputInner>
+          </InputSection>
+        </ChatContainerInner>
+      </ChatSideContainer>
+    </>
   );
 };
 

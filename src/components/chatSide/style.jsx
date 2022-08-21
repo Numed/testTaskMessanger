@@ -12,7 +12,7 @@ export const ChatSideContainer = styled.section`
   }
 
   &.switch {
-    @media (max-width: 400px) {
+    @media (max-width: 660px) {
       opacity: 0 !important;
       visibility: hidden !important;
       display: none !important;
@@ -143,6 +143,14 @@ export const InputSection = styled.div`
   align-items: center;
   border-top: 1px solid #ccc;
   padding: 20px 0;
+
+  @media (max-width: 780px) {
+    width: 90%;
+  }
+
+  @media (max-width: 660px) {
+    width: 100%;
+  }
 `;
 
 export const InputInner = styled.div`
@@ -183,13 +191,14 @@ export const BtnSubmit = styled.button`
   border: none;
   z-index: 3;
   cursor: pointer;
+  background: transparent;
 
   i {
     transform: scale(1.1);
   }
 
   @media (max-width: 660px) {
-    left: 83%;
+    left: 80%;
   }
 `;
 
@@ -205,5 +214,22 @@ export const BtnBack = styled.i`
     position: absolute;
     top: 0px;
     left: 20px;
+  }
+`;
+
+export const TotalDivMessage = styled.div`
+  width: 100%;
+
+  & > .my-container,
+  & > .interlocutor-container {
+    width: 95%;
+  }
+
+  & > .interlocutor-container {
+    padding-left: 45px;
+
+    @media (max-width: 660px) {
+      padding-left: 15px;
+    }
   }
 `;

@@ -53,3 +53,7 @@ body.dark-mode .chat-inner::-webkit-scrollbar-thumb {
 body.dark-mode .chat-inner::-webkit-scrollbar-track {
   background-color: #27292d;
 }
+
+.Toastify__toast-theme--dark {
+  background: #303236 !important;
+}

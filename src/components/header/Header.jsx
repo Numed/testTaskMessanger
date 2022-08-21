@@ -70,6 +70,10 @@ const Input = styled.input`
   &:focus {
     border: none;
     outline: none;
+
+    &::-webkit-input-placeholder {
+      color: transparent;
+    }
   }
 
   @media (max-width: 660px) {
@@ -107,24 +111,6 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const searchTerm = useDebounce(searchValue.trim().toLowerCase(), 300);
 
-  const showSideMenu = () => {
-    // if (sideChat.classList.contains("show")) {
-    //   sideChat.classList.remove("show");
-    //   sideMenu.classList.remove("clicked");
-    // }
-    //   if (sideMenu.classList.contains("clicked")) {
-    //     setTimeout(() => {
-    //       sideChat.style.display = "none";
-    //       sideMenu.style.display = "block";
-    //       sideMenu.classList.remove("clicked");
-    //     }, 250);
-    //     sideMenu.style.opacity = "1";
-    //     sideMenu.style.visibility = "visible";
-    //     sideChat.style.opacity = "0";
-    //     sideChat.style.visibility = "hidden";
-    //   }
-  };
-
   const findUser = () => {
     const usersName = document.querySelectorAll(".avatar-name");
     let searchData = searchTerm;
@@ -150,7 +136,7 @@ const Header = () => {
   return (
     <HeaderContainer>
       <HeaderInner>
-        <Logo onClick={showSideMenu()}>M</Logo>
+        <Logo>M</Logo>
         <InputSearch>
           <i className="fas fa-search"></i>
           <Input
