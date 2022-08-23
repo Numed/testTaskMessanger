@@ -131,6 +131,7 @@ const Header = () => {
 
   useEffect(() => {
     findUser();
+    // eslint-disable-next-line
   }, [searchValue]);
 
   return (

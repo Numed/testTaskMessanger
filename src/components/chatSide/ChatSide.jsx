@@ -24,15 +24,15 @@ import "react-toastify/dist/ReactToastify.css";
 import ToastifyMessage from "../toastifyMessage/ToastifyMessage";
 
 const ChatSide = () => {
-  const { selectedUser, messages, setMessages, countMessage, setCountMessage } =
+  const { selectedUser, messages, setMessages, setCountMessage } =
     useContext(InfoContext);
   const [value, setValue] = useState("");
   const { name, avatar } = selectedUser;
   const { request } = useHttp();
   const [error, setError] = useState(false);
-  let count = 0;
-  let dateNow;
-  let dateSide;
+  let count = 0,
+    dateNow,
+    dateSide;
 
   useEffect(() => {
     localStorage.setItem("history-messages", JSON.stringify(messages));
@@ -108,7 +108,6 @@ const ChatSide = () => {
     }, 10000);
     return count;
   };
-  console.log("COUTNS IN CHAT", count);
 
   const onError = (e) => {
     setError(true);

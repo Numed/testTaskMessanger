@@ -46,6 +46,7 @@ const SideMenu = () => {
   }, [messages, info]);
 
   const sortChats = () => {
+    console.log(messages);
     if (messages[messages.length - 1]) {
       const currentChat = info;
       const activeChat = currentChat.filter(
@@ -79,44 +80,29 @@ const SideMenu = () => {
   };
 
   const switchMenu = () => {
-    const sideMenu = document.querySelector(".side-container");
-    const chatSide = document.querySelector(".switch");
+    const sideMenu = document.querySelector(".side-container"),
+      chatSide = document.querySelector(".switch");
     if (chatSide) {
       chatSide.classList.remove("switch");
     }
     sideMenu.classList.add("clicked");
   };
 
-  const displayCounter = (e) => {
-    const chats = document.querySelectorAll(".chat");
-    const avatarNames = document.querySelectorAll(".avatar-name");
-    const counterMessages = document.querySelectorAll(".message-counter");
+  const displayCounter = (e, action) => {
+    const chats = document.querySelectorAll(".chat"),
+      avatarNames = document.querySelectorAll(".avatar-name"),
+      counterMessages = document.querySelectorAll(".message-counter");
     for (const avatarName of avatarNames) {
       if (avatarName.textContent === e) {
         for (const chat of chats) {
           if (chat.contains(avatarName)) {
             for (const counterMessage of counterMessages) {
               if (chat.contains(avatarName) && chat.contains(counterMessage)) {
-                counterMessage.classList.add("display");
-              }
-            }
-          }
-        }
-      }
-    }
-  };
-
-  const removeDisplay = (e) => {
-    const chats = document.querySelectorAll(".chat");
-    const avatarNames = document.querySelectorAll(".avatar-name");
-    const counterMessages = document.querySelectorAll(".message-counter");
-    for (const avatarName of avatarNames) {
-      if (avatarName.textContent === e) {
-        for (const chat of chats) {
-          if (chat.contains(avatarName)) {
-            for (const counterMessage of counterMessages) {
-              if (chat.contains(avatarName) && chat.contains(counterMessage)) {
-                counterMessage.classList.remove("display");
+                if (action === "add") {
+                  counterMessage.classList.add("display");
+                } else {
+                  counterMessage.classList.remove("display");
+                }
               }
             }
           }
@@ -153,15 +139,14 @@ const SideMenu = () => {
           <ChatList>
             {info.map(({ avatar, name, message, date }, i) => {
               const filterMessage = messages.filter(
-                (user) => user.name === name
-              );
-              const lastFilteredElementMessage =
-                filterMessage[filterMessage.length - 1];
-
-              const countsMessage = countMessage.filter(
-                (user) => user.name === name
-              );
-              const lastCountsMessage = countsMessage[countsMessage.length - 1];
+                  (user) => user.name === name
+                ),
+                lastFilteredElementMessage =
+                  filterMessage[filterMessage.length - 1],
+                countsMessage = countMessage.filter(
+                  (user) => user.name === name
+                ),
+                lastCountsMessage = countsMessage[countsMessage.length - 1];
               return (
                 <Chat
                   key={i}
@@ -178,7 +163,7 @@ const SideMenu = () => {
                         countsMessage.length !== 0
                           ? countsMessage.length !== 0 &&
                             lastCountsMessage.count !== 0
-                            ? displayCounter(lastCountsMessage.name)
+                            ? displayCounter(lastCountsMessage.name, "add")
                             : null
                           : null
                       }
@@ -191,11 +176,11 @@ const SideMenu = () => {
                           ? lastCountsMessage.count !== 0
                             ? [
                                 (lastCountsMessage.count = 0),
-                                removeDisplay(lastCountsMessage.name),
+                                displayCounter(lastCountsMessage.name, "none"),
                               ]
                             : null
                           : lastCountsMessage.count
-                        : removeDisplay(countMessage.name)}
+                        : displayCounter(countMessage.name, "none")}
                     </MessageCount>
                     <AvatarInfo>
                       <AvatarName className="avatar-name">{name}</AvatarName>
