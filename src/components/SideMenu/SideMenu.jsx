@@ -43,7 +43,11 @@ const SideMenu = () => {
   useEffect(() => {
     sortChats();
     // eslint-disable-next-line
-  }, [messages, info]);
+  }, [messages]);
+
+  useEffect(() => {
+    console.log("ALERT", info);
+  }, [info]);
 
   const sortChats = () => {
     console.log(messages);
@@ -56,7 +60,7 @@ const SideMenu = () => {
       currentChat.splice(index, 1);
       currentChat.unshift(activeChat[0]);
       localStorage.setItem("history-chat-list", JSON.stringify(currentChat));
-      setInfo(currentChat);
+      setInfo([...info, currentChat].slice(0, 5));
     }
   };
 
