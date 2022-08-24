@@ -45,12 +45,7 @@ const SideMenu = () => {
     // eslint-disable-next-line
   }, [messages]);
 
-  useEffect(() => {
-    console.log("ALERT", info);
-  }, [info]);
-
   const sortChats = () => {
-    console.log(messages);
     if (messages[messages.length - 1]) {
       const currentChat = info;
       const activeChat = currentChat.filter(
