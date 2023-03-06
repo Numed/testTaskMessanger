@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/messanger/static/css/main.44dedf7a.css",
-    "main.js": "/messanger/static/js/main.5cc284bf.js",
-    "static/media/error.gif": "/messanger/static/media/error.134f20a351edb0b1d08e.gif",
-    "static/media/avatar.jpg": "/messanger/static/media/avatar.52c40d586c7bd9612bac.jpg",
-    "index.html": "/messanger/index.html",
-    "main.44dedf7a.css.map": "/messanger/static/css/main.44dedf7a.css.map",
-    "main.5cc284bf.js.map": "/messanger/static/js/main.5cc284bf.js.map"
+    "main.css": "/Numed/testTaskMessanger/static/css/main.44dedf7a.css",
+    "main.js": "/Numed/testTaskMessanger/static/js/main.45326a98.js",
+    "static/media/error.gif": "/Numed/testTaskMessanger/static/media/error.134f20a351edb0b1d08e.gif",
+    "static/media/avatar.jpg": "/Numed/testTaskMessanger/static/media/avatar.52c40d586c7bd9612bac.jpg",
+    "index.html": "/Numed/testTaskMessanger/index.html",
+    "main.44dedf7a.css.map": "/Numed/testTaskMessanger/static/css/main.44dedf7a.css.map",
+    "main.45326a98.js.map": "/Numed/testTaskMessanger/static/js/main.45326a98.js.map"
   },
   "entrypoints": [
     "static/css/main.44dedf7a.css",
-    "static/js/main.5cc284bf.js"
+    "static/js/main.45326a98.js"
   ]
 }
